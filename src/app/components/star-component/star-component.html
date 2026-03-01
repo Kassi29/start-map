@@ -1,0 +1,76 @@
+<main class="celestial-container">
+  @if (activeMoment$ | async; as current) {
+    @for (item of [current]; track item.description) {
+      <header class="milestone-info">
+        <h1 class="milestone-title">{{ item.description }}</h1>
+        <p class="milestone-date">{{ item.occurrenceDate | date: 'MMMM d, yyyy' }}</p>
+      </header>
+    }
+  }
+
+  <section class="star-map-viewport">
+    <svg viewBox="0 0 820 820" class="star-chart-svg" shape-rendering="optimizeSpeed">
+      <circle cx="410" cy="410" r="400" class="sky-disk"/>
+
+      @if (projectedCelestialData$ | async; as data) {
+        <g class="galaxy-field">
+          @for (galaxy of data.galaxies; track galaxy.name) {
+            <g class="galaxy-group">
+              <ellipse [attr.cx]="galaxy.x" [attr.cy]="galaxy.y" [attr.rx]="8" [attr.ry]="4" class="galaxy-cloud"/>
+              <circle [attr.cx]="galaxy.x" [attr.cy]="galaxy.y" r="1" class="galaxy-core">
+                <title>{{ galaxy.name }}</title>
+              </circle>
+            </g>
+          }
+        </g>
+
+        <g class="planet-field">
+          @for (planet of data.planets; track planet.name) {
+            <g class="planet-group">
+              <circle [attr.cx]="planet.x" [attr.cy]="planet.y" [attr.r]="calculateVisualRadius(planet.magnitude) * 2"
+                      [attr.class]="'planet-glow ' + planet.name.toLowerCase()"/>
+              <circle [attr.cx]="planet.x" [attr.cy]="planet.y" [attr.r]="calculateVisualRadius(planet.magnitude)"
+                      class="planet-core">
+                <title>{{ planet.name }}</title>
+              </circle>
+            </g>
+          }
+        </g>
+
+        <g class="star-field">
+          @for (star of data.stars; track star.name) {
+            <g class="star-group">
+              <circle [attr.cx]="star.x" [attr.cy]="star.y" [attr.r]="calculateVisualRadius(star.magnitude) * 1.5"
+                      class="star-glow"/>
+              <circle [attr.cx]="star.x" [attr.cy]="star.y" [attr.r]="calculateVisualRadius(star.magnitude)"
+                      class="star-core">
+                <title>{{ star.name }}</title>
+              </circle>
+            </g>
+          }
+        </g>
+      }
+
+      <circle cx="410" cy="410" r="409" class="chart-frame"/>
+    </svg>
+  </section>
+
+  <nav class="timeline-navigation">
+    <button type="button"
+            (click)="prevMoment()"
+            [hidden]="currentIndex === 0"
+            class="arrow-btn"
+            title="Before">
+      <span class="arrow-icon">←</span>
+    </button>
+
+    <div class="nav-divider"></div>
+
+    <button type="button"
+            (click)="nextMoment()"
+            class="arrow-btn"
+            title="Next">
+      <span class="arrow-icon">→</span>
+    </button>
+  </nav>
+</main>
