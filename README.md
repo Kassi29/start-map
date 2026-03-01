@@ -42,5 +42,3 @@ npm install
 ng serve
 
 ```
-
-¿Quieres que te ayude a elegir una **licencia (MIT o GPL)** para tu repo para que sea oficialmente "Open Source"? Es solo añadir un archivito más.
